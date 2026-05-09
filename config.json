@@ -1,0 +1,90 @@
+{
+  "_comment": "Soundboard Konfiguration. Szenen haben eine 'number' (z.B. '1', '7.1', '7.2'). Ein Sound kann in mehreren Szenen auftauchen – einfach denselben 'file'-Eintrag in mehreren Szenen verwenden.",
+  "boards": [
+    {
+      "id": "momo",
+      "title": "Momo",
+      "description": "Michael Ende – Momo",
+      "color": "#c8a96a",
+      "audioPath": "audio/Momo/",
+      "scenes": [
+        {
+          "number": "1",
+          "name": "Szene 1",
+          "sounds": [
+            { "file": "Donner.mp3", "label": "Donner" },
+            { "file": "Baby weinen.opus", "label": "Baby weinen" }
+          ]
+        },
+        {
+          "number": "2",
+          "name": "Szene 2",
+          "sounds": [
+            { "file": "Graue Herren Alarm.wav", "label": "Graue Herren Alarm" },
+            { "file": "audley_fergine-warning-alarm-loop-1-279206.mp3", "label": "Warning Alarm Loop" },
+            { "file": "electric-razor.mp3", "label": "Elektrorasierer" }
+          ]
+        },
+        {
+          "number": "3",
+          "name": "Szene 3",
+          "sounds": [
+            { "file": "Machine hochnehmen momo.mp3", "label": "Maschine hochnehmen" },
+            { "file": "Astral Projection - Enrico Sangiuliano.flac", "label": "Astral Projection" }
+          ]
+        },
+        {
+          "number": "4",
+          "name": "Szene 4 – Uhrenschläge",
+          "sounds": [
+            { "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.flac", "label": "Stundenschlag Ulmer Münster" },
+            { "file": "Uhrenschlag - Bell's Digital.flac", "label": "Uhrenschlag Bell's Digital" },
+            { "file": "Uhrenschlag - Carlos Albrecht.flac", "label": "Uhrenschlag Carlos Albrecht" },
+            { "file": "Uhrenschlag - na Not Applicable.mp3", "label": "Uhrenschlag" },
+            { "file": "vecna clock.flac", "label": "Vecna Clock" },
+            { "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.flac", "label": "Küchentimer (3x)" },
+            { "file": "Old Bell Tower - Derek Fiechter.flac", "label": "Old Bell Tower" }
+          ]
+        },
+        {
+          "number": "5",
+          "name": "Szene 5 – Musik",
+          "sounds": [
+            { "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.flac", "label": "Volkwein" },
+            { "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.flac", "label": "Wide Open" },
+            { "file": "Dark Planet - Boris Brejcha.flac", "label": "Dark Planet" },
+            { "file": "Fluch der Karibik - Jean Luc Marie.flac", "label": "Fluch der Karibik" },
+            { "file": "Aura - Leni Woess, Toby Woess.flac", "label": "Aura" },
+            { "file": "Jacob Marley's Ghost - Jonas Maus.flac", "label": "Jacob Marley's Ghost" }
+          ]
+        },
+        {
+          "number": "0",
+          "name": "Alle Sounds (Übersicht)",
+          "sounds": [
+            { "file": "Astral Projection - Enrico Sangiuliano.flac", "label": "Astral Projection" },
+            { "file": "audley_fergine-warning-alarm-loop-1-279206.mp3", "label": "Warning Alarm Loop" },
+            { "file": "Aura - Leni Woess, Toby Woess.flac", "label": "Aura" },
+            { "file": "Baby weinen.opus", "label": "Baby weinen" },
+            { "file": "Dark Planet - Boris Brejcha.flac", "label": "Dark Planet" },
+            { "file": "Donner.mp3", "label": "Donner" },
+            { "file": "electric-razor.mp3", "label": "Elektrorasierer" },
+            { "file": "Fluch der Karibik - Jean Luc Marie.flac", "label": "Fluch der Karibik" },
+            { "file": "Graue Herren Alarm.wav", "label": "Graue Herren Alarm" },
+            { "file": "Jacob Marley's Ghost - Jonas Maus.flac", "label": "Jacob Marley's Ghost" },
+            { "file": "Machine hochnehmen momo.mp3", "label": "Maschine hochnehmen" },
+            { "file": "Old Bell Tower - Derek Fiechter.flac", "label": "Old Bell Tower" },
+            { "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.flac", "label": "Stundenschlag Ulmer Münster" },
+            { "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.flac", "label": "Küchentimer (3x)" },
+            { "file": "Uhrenschlag - Bell's Digital.flac", "label": "Uhrenschlag Bell's Digital" },
+            { "file": "Uhrenschlag - Carlos Albrecht.flac", "label": "Uhrenschlag Carlos Albrecht" },
+            { "file": "Uhrenschlag - na Not Applicable.mp3", "label": "Uhrenschlag" },
+            { "file": "vecna clock.flac", "label": "Vecna Clock" },
+            { "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.flac", "label": "Volkwein" },
+            { "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.flac", "label": "Wide Open" }
+          ]
+        }
+      ]
+    }
+  ]
+}

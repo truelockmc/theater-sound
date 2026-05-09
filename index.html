@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soundboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0907;
+    --surface: #15110e;
+    --surface2: #1e1912;
+    --border: #2c2418;
+    --gold: #c8a96a;
+    --gold-dim: #7a6540;
+    --gold-bright: #e8cc88;
+    --text: #d4c4ae;
+    --text-muted: #6b5f50;
+    --red: #8b3a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(48px, 8vw, 80px);
+    font-weight: 300;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  h1 span {
+    color: var(--gold);
+  }
+
+  .header-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    margin: 24px auto;
+  }
+
+  .boards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2px;
+  }
+
+  .board-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px 32px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .board-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .board-card:hover::before {
+    opacity: 1;
+  }
+
+  .board-card:hover {
+    background: var(--surface2);
+    border-color: var(--gold-dim);
+    transform: translateY(-2px);
+  }
+
+  .board-card:hover .board-arrow {
+    transform: translateX(6px);
+    color: var(--gold);
+  }
+
+  .board-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .board-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .board-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 28px;
+  }
+
+  .board-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .board-arrow {
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+  }
+
+  .board-color-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--card-color, var(--gold));
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 80px;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 80px;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+  }
+
+  .error {
+    text-align: center;
+    padding: 40px;
+    color: var(--red);
+    font-size: 12px;
+    background: rgba(139,58,42,0.1);
+    border: 1px solid var(--red);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-eyebrow">Ton-Regie</div>
+    <h1>Sound<span>board</span></h1>
+    <div class="header-line"></div>
+  </header>
+
+  <div id="boards-container">
+    <div class="loading">Lade Konfiguration…</div>
+  </div>
+
+  <footer>— Ton-Regie • Statisches Soundboard —</footer>
+</div>
+
+<script>
+async function loadBoards() {
+  const container = document.getElementById('boards-container');
+
+  try {
+    const res = await fetch('config.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const config = await res.json();
+
+    if (!config.boards || config.boards.length === 0) {
+      container.innerHTML = '<div class="error">Keine Boards in config.json gefunden.</div>';
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'boards-grid';
+
+    config.boards.forEach((board, i) => {
+      const soundCount = board.scenes
+        ? board.scenes.reduce((acc, s) => acc + (s.sounds ? s.sounds.length : 0), 0)
+        : 0;
+      const sceneCount = board.scenes ? board.scenes.length : 0;
+
+      const card = document.createElement('a');
+      card.className = 'board-card';
+      card.href = `board.html?id=${encodeURIComponent(board.id)}`;
+      card.style.setProperty('--card-color', board.color || '#c8a96a');
+
+      card.innerHTML = `
+        <div class="board-number">Board ${String(i + 1).padStart(2, '0')}</div>
+        <div class="board-title">${escHtml(board.title)}</div>
+        <div class="board-desc">${escHtml(board.description || '')}</div>
+        <div class="board-meta">
+          <span><span class="board-color-dot"></span>${sceneCount} Szenen · ${soundCount} Sounds</span>
+          <span class="board-arrow">→</span>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(grid);
+  } catch (err) {
+    container.innerHTML = `<div class="error">Fehler beim Laden der Konfiguration:<br>${escHtml(err.message)}<br><br>Stelle sicher, dass config.json im selben Verzeichnis liegt und der Server CORS erlaubt (z.B. lokaler HTTP-Server, nicht file://).</div>`;
+  }
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+loadBoards();
+</script>
+</body>
+</html>
