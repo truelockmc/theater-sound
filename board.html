@@ -1,795 +1,719 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soundboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0b0907;
-    --surface: #15110e;
-    --surface2: #1e1912;
-    --surface3: #242018;
-    --border: #2c2418;
-    --border2: #3a3022;
-    --gold: #c8a96a;
-    --gold-dim: #7a6540;
-    --gold-bright: #e8cc88;
-    --gold-glow: rgba(200, 169, 106, 0.15);
-    --text: #d4c4ae;
-    --text-muted: #6b5f50;
-    --text-dim: #4a4035;
-    --red: #c0392b;
-    --red-dim: rgba(192,57,43,0.2);
-    --green-glow: rgba(39, 174, 96, 0.12);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* ── TOP BAR ── */
-  #topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(11,9,7,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    height: 56px;
-  }
-
-  #topbar a.back {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    transition: color 0.15s;
-    white-space: nowrap;
-  }
-  #topbar a.back:hover { color: var(--gold); }
-
-  #topbar .sep {
-    width: 1px;
-    height: 20px;
-    background: var(--border2);
-    flex-shrink: 0;
-  }
-
-  #board-title-bar {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--text);
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Now playing strip */
-  #now-playing-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 2;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  #now-playing-label {
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    color: var(--gold-dim);
-    text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  #now-playing-chips {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    flex: 1;
-    min-width: 0;
-    padding: 4px 0;
-  }
-  #now-playing-chips::-webkit-scrollbar { display: none; }
-
-  .now-chip {
-    background: var(--gold-glow);
-    border: 1px solid var(--gold-dim);
-    border-radius: 2px;
-    padding: 3px 10px;
-    font-size: 10px;
-    color: var(--gold);
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-  .now-chip:hover {
-    background: rgba(200,169,106,0.25);
-  }
-  .now-chip.fading {
-    opacity: 0.5;
-    border-style: dashed;
-  }
-
-  #stop-all-btn {
-    background: none;
-    border: 1px solid var(--red);
-    color: var(--red);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  #stop-all-btn:hover {
-    background: var(--red-dim);
-  }
-  #stop-all-btn:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-
-  /* ── MAIN CONTENT ── */
-  #content {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
-
-  /* ── SCENE SECTION ── */
-  .scene-section {
-    margin-bottom: 48px;
-  }
-
-  .scene-header {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .scene-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    background: var(--gold-glow);
-    border: 1px solid var(--gold-dim);
-    padding: 2px 10px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  .scene-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--text);
-    letter-spacing: 0.02em;
-  }
-
-  .scene-count {
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-left: auto;
-  }
-
-  /* ── SOUND GRID ── */
-  .sound-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-  }
-
-  /* ── SOUND CARD ── */
-  .sound-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 0;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    display: flex;
-    flex-direction: column;
-    min-height: 100px;
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-  }
-
-  .sound-card:hover {
-    border-color: var(--border2);
-    background: var(--surface2);
-  }
-
-  .sound-card.playing {
-    border-color: var(--gold-dim);
-    background: var(--surface2);
-    box-shadow: 0 0 0 1px var(--gold-dim) inset, 0 0 20px var(--gold-glow);
-  }
-
-  .sound-card.fading {
-    border-color: var(--gold-dim);
-    opacity: 0.6;
-    transition: opacity 2s ease, border-color 0.15s;
-  }
-
-  /* Playing shimmer line */
-  .sound-card.playing::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%; right: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold), transparent);
-    animation: shimmer 2s linear infinite;
-  }
-
-  @keyframes shimmer {
-    0%   { left: -100%; right: 100%; }
-    50%  { left: 0%; right: 0%; }
-    100% { left: 100%; right: -100%; }
-  }
-
-  /* Main play area (clickable to play/stop) */
-  .card-play-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 14px 10px 14px;
-  }
-
-  .play-icon {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    transition: color 0.15s;
-    font-size: 16px;
-  }
-
-  .sound-card:hover .play-icon { color: var(--text); }
-  .sound-card.playing .play-icon { color: var(--gold); }
-
-  .card-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text);
-    line-height: 1.4;
-    word-break: break-word;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .sound-card.playing .card-label { color: var(--gold-bright); }
-
-  /* Bottom bar with loop toggle */
-  .card-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0 10px 8px 14px;
-    gap: 6px;
-    border-top: 1px solid transparent;
-    transition: border-color 0.15s;
-  }
-
-  .sound-card.playing .card-bottom {
-    border-top-color: var(--border);
-  }
-
-  .card-status {
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    flex: 1;
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
-
-  .sound-card.playing .card-status { opacity: 1; color: var(--gold-dim); }
-  .sound-card.fading .card-status { opacity: 1; color: var(--text-dim); }
-
-  .loop-btn {
-    background: none;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    padding: 3px 7px;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-    z-index: 2; /* above card click area */
-    position: relative;
-  }
-
-  .loop-btn:hover {
-    border-color: var(--border2);
-    color: var(--text-muted);
-    background: var(--surface3);
-  }
-
-  .loop-btn.active {
-    border-color: var(--gold-dim);
-    color: var(--gold);
-    background: var(--gold-glow);
-  }
-
-  /* Waveform animation for playing */
-  .waveform {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    height: 16px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .sound-card.playing .waveform { opacity: 1; }
-  .sound-card.fading .waveform { opacity: 0.3; }
-
-  .waveform span {
-    display: block;
-    width: 2px;
-    background: var(--gold);
-    border-radius: 1px;
-    animation: wave 0.8s ease-in-out infinite;
-  }
-
-  .waveform span:nth-child(1) { height: 4px;  animation-delay: 0s; }
-  .waveform span:nth-child(2) { height: 10px; animation-delay: 0.1s; }
-  .waveform span:nth-child(3) { height: 7px;  animation-delay: 0.05s; }
-  .waveform span:nth-child(4) { height: 12px; animation-delay: 0.15s; }
-  .waveform span:nth-child(5) { height: 5px;  animation-delay: 0.08s; }
-
-  @keyframes wave {
-    0%, 100% { transform: scaleY(1); }
-    50%       { transform: scaleY(2.2); }
-  }
-
-  /* ── LOADING / ERROR ── */
-  #loading {
-    padding: 80px 24px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 12px;
-    letter-spacing: 0.2em;
-  }
-
-  .error-box {
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    padding: 24px;
-    margin: 40px 0;
-    font-size: 12px;
-    line-height: 1.7;
-    color: var(--text);
-  }
-
-  /* ── SCROLL TO SCENE ── */
-  .scene-nav {
-    position: fixed;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .scene-nav-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--border2);
-    cursor: pointer;
-    transition: all 0.15s;
-    position: relative;
-  }
-
-  .scene-nav-dot:hover {
-    background: var(--gold-dim);
-    transform: scale(1.4);
-  }
-
-  .scene-nav-dot.active {
-    background: var(--gold);
-  }
-
-  .scene-nav-dot .nav-tooltip {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    padding: 3px 8px;
-    font-size: 10px;
-    color: var(--text);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-  }
-
-  .scene-nav-dot:hover .nav-tooltip { opacity: 1; }
-</style>
-</head>
-<body>
-
-<!-- TOP BAR -->
-<div id="topbar">
-  <a href="index.html" class="back">← Boards</a>
-  <div class="sep"></div>
-  <div id="board-title-bar">…</div>
-  <div class="sep"></div>
-  <div id="now-playing-bar">
-    <span id="now-playing-label" style="display:none">▶ LÄUFT:</span>
-    <div id="now-playing-chips"></div>
-  </div>
-  <button id="stop-all-btn" disabled>STOP ALL</button>
-</div>
-
-<!-- SCENE NAV DOTS -->
-<nav class="scene-nav" id="scene-nav"></nav>
-
-<!-- MAIN -->
-<div id="content">
-  <div id="loading">Lade Board…</div>
-</div>
-
-<script>
-// ── STATE ──────────────────────────────────────────────────
-const audioPool = {};  // filename → { audio, loop, fadeTimer, cards }
-
-function getAudio(filename, audioPath) {
-  if (!audioPool[filename]) {
-    const audio = new Audio(audioPath + encodeURIComponent(filename));
-    audio.preload = 'auto';
-    audioPool[filename] = {
-      audio,
-      loop: false,
-      fadeTimer: null,
-      cards: []  // all DOM cards referencing this file
-    };
-    audio.addEventListener('ended', () => {
-      if (!audio.loop) {
-        stopEntry(filename, false);
-      }
-    });
-  }
-  return audioPool[filename];
-}
-
-function isPlaying(filename) {
-  const e = audioPool[filename];
-  if (!e) return false;
-  return !e.audio.paused && !e.audio.ended;
-}
-
-function isFading(filename) {
-  const e = audioPool[filename];
-  if (!e) return false;
-  return e.fadeTimer !== null;
-}
-
-// ── PLAYBACK ───────────────────────────────────────────────
-function playSound(filename, audioPath) {
-  const entry = getAudio(filename, audioPath);
-  const { audio } = entry;
-
-  // Cancel any ongoing fade
-  if (entry.fadeTimer) {
-    clearInterval(entry.fadeTimer);
-    entry.fadeTimer = null;
-  }
-
-  audio.volume = 1;
-  audio.currentTime = 0;
-  audio.loop = entry.loop;
-  audio.play().catch(err => console.warn('Playback error:', err));
-  updateCards(filename);
-  updateNowPlaying();
-}
-
-function stopEntry(filename, fade = true) {
-  const entry = audioPool[filename];
-  if (!entry) return;
-  const { audio } = entry;
-
-  if (entry.fadeTimer) {
-    clearInterval(entry.fadeTimer);
-    entry.fadeTimer = null;
-  }
-
-  if (!fade || audio.paused) {
-    audio.pause();
-    audio.currentTime = 0;
-    audio.volume = 1;
-    updateCards(filename);
-    updateNowPlaying();
-    return;
-  }
-
-  // Fade out over 2 seconds
-  const startVol = audio.volume;
-  const steps = 40;
-  const interval = 2000 / steps;
-  let step = 0;
-
-  updateCards(filename); // update to fading state
-
-  entry.fadeTimer = setInterval(() => {
-    step++;
-    audio.volume = Math.max(0, startVol * (1 - step / steps));
-    if (step >= steps) {
-      clearInterval(entry.fadeTimer);
-      entry.fadeTimer = null;
-      audio.pause();
-      audio.currentTime = 0;
-      audio.volume = 1;
-      updateCards(filename);
-      updateNowPlaying();
-    }
-  }, interval);
-}
-
-function stopAllSounds() {
-  Object.keys(audioPool).forEach(f => stopEntry(f, true));
-}
-
-function toggleLoop(filename) {
-  const entry = audioPool[filename];
-  if (!entry) return;
-  entry.loop = !entry.loop;
-  entry.audio.loop = entry.loop;
-  updateCards(filename);
-}
-
-// ── UI UPDATES ─────────────────────────────────────────────
-function updateCards(filename) {
-  const entry = audioPool[filename];
-  if (!entry) return;
-  const playing = !entry.audio.paused;
-  const fading = entry.fadeTimer !== null;
-
-  entry.cards.forEach(card => {
-    card.classList.toggle('playing', playing && !fading);
-    card.classList.toggle('fading', fading);
-
-    const icon = card.querySelector('.play-icon');
-    if (icon) {
-      if (playing && !fading) icon.textContent = '■';
-      else icon.textContent = '▶';
-    }
-
-    const status = card.querySelector('.card-status');
-    if (status) {
-      if (fading) status.textContent = 'fade…';
-      else if (playing) status.textContent = 'live';
-      else status.textContent = '';
-    }
-
-    const loopBtn = card.querySelector('.loop-btn');
-    if (loopBtn) loopBtn.classList.toggle('active', entry.loop);
-  });
-}
-
-function updateNowPlaying() {
-  const chips = document.getElementById('now-playing-chips');
-  const label = document.getElementById('now-playing-label');
-  const stopAll = document.getElementById('stop-all-btn');
-  chips.innerHTML = '';
-
-  const active = Object.entries(audioPool).filter(([, e]) => !e.audio.paused || e.fadeTimer);
-
-  label.style.display = active.length ? 'block' : 'none';
-  stopAll.disabled = active.length === 0;
-
-  active.forEach(([filename, entry]) => {
-    // Find a label for this file
-    const card = entry.cards[0];
-    const labelText = card ? card.querySelector('.card-label')?.textContent || filename : filename;
-
-    const chip = document.createElement('div');
-    chip.className = 'now-chip' + (entry.fadeTimer ? ' fading' : '');
-    chip.textContent = (entry.loop ? '↺ ' : '') + labelText;
-    chip.title = 'Stoppen (Fade)';
-    chip.addEventListener('click', () => stopEntry(filename, true));
-    chips.appendChild(chip);
-  });
-}
-
-// ── CARD FACTORY ──────────────────────────────────────────
-function makeCard(sound, audioPath) {
-  const { file, label } = sound;
-
-  const card = document.createElement('div');
-  card.className = 'sound-card';
-  card.dataset.file = file;
-
-  card.innerHTML = `
-    <div class="card-play-area">
-      <div class="play-icon">▶</div>
-      <div class="card-label">${escHtml(label || file)}</div>
-      <div class="waveform">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Soundboard</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --bg: #111;
+                --s1: #191919;
+                --s2: #1f1f1f;
+                --bd: #252525;
+                --bd2: #333;
+                --txt: #e8e4da;
+                --muted: #555;
+                --dim: #333;
+                --accent: #c43c10;
+                --acc-txt: #f5ede8;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--txt);
+                font-family: "Courier Prime", "Courier New", monospace;
+                min-height: 100vh;
+            }
+
+            /* ─── TOPBAR ─────────────────────────────── */
+            #bar {
+                position: sticky;
+                top: 0;
+                z-index: 99;
+                background: #0e0e0e;
+                border-bottom: 1px solid var(--bd);
+                display: flex;
+                align-items: center;
+                gap: 0;
+                height: 48px;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            #bar a.back {
+                padding: 0 18px;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                font-size: 13px;
+                color: var(--muted);
+                text-decoration: none;
+                border-right: 1px solid var(--bd);
+                white-space: nowrap;
+                transition:
+                    color 0.08s,
+                    background 0.08s;
+            }
+            #bar a.back:hover {
+                color: var(--txt);
+                background: var(--s1);
+            }
+
+            #bar-title {
+                padding: 0 20px;
+                font-size: 16px;
+                font-weight: 700;
+                border-right: 1px solid var(--bd);
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            #playing-strip {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 0 16px;
+                overflow: hidden;
+                min-width: 0;
+            }
+
+            #playing-label {
+                font-size: 11px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--accent);
+                flex-shrink: 0;
+                display: none;
+            }
+
+            #playing-tags {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                scrollbar-width: none;
+                flex: 1;
+            }
+            #playing-tags::-webkit-scrollbar {
+                display: none;
+            }
+
+            .ptag {
+                font-size: 11px;
+                padding: 3px 8px;
+                background: #2a1008;
+                border: 1px solid var(--accent);
+                color: var(--acc-txt);
+                white-space: nowrap;
+                cursor: pointer;
+                flex-shrink: 0;
+                transition: background 0.08s;
+            }
+            .ptag:hover {
+                background: #3d1710;
+            }
+            .ptag.fading {
+                opacity: 0.45;
+                border-style: dashed;
+            }
+
+            #stop-all {
+                height: 100%;
+                padding: 0 18px;
+                background: none;
+                border: none;
+                border-left: 1px solid var(--bd);
+                font-family: inherit;
+                font-size: 12px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--accent);
+                cursor: pointer;
+                white-space: nowrap;
+                transition:
+                    background 0.08s,
+                    color 0.08s;
+                flex-shrink: 0;
+            }
+            #stop-all:hover:not(:disabled) {
+                background: #2a1008;
+            }
+            #stop-all:disabled {
+                color: var(--dim);
+                cursor: default;
+            }
+
+            /* ─── CONTENT ────────────────────────────── */
+            #content {
+                max-width: 1120px;
+                margin: 0 auto;
+                padding: 40px 28px 80px;
+            }
+
+            /* ─── SCENE ──────────────────────────────── */
+            .scene {
+                margin-bottom: 44px;
+            }
+
+            .scene-head {
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 14px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid var(--bd2);
+            }
+
+            .scene-num {
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--accent);
+                background: #1e0c05;
+                border: 1px solid #3a1a0a;
+                padding: 2px 8px;
+                flex-shrink: 0;
+            }
+
+            .scene-title {
+                font-size: 18px;
+                font-weight: 700;
+            }
+
+            .scene-n {
+                font-size: 12px;
+                color: var(--dim);
+                margin-left: auto;
+            }
+
+            /* ─── SOUND GRID ─────────────────────────── */
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+                gap: 6px;
+            }
+
+            /* ─── SOUND BUTTON ───────────────────────── */
+            .snd {
+                background: var(--s1);
+                border: 1px solid var(--bd);
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                transition:
+                    border-color 0.08s,
+                    background 0.08s;
+                min-height: 88px;
+                position: relative;
+                user-select: none;
+            }
+
+            .snd:hover {
+                background: var(--s2);
+                border-color: var(--bd2);
+            }
+
+            .snd.playing {
+                background: var(--accent);
+                border-color: var(--accent);
+            }
+
+            .snd.fading {
+                background: #5c1c07;
+                border-color: #7a2a0a;
+            }
+
+            .snd-main {
+                flex: 1;
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 12px 13px 8px;
+            }
+
+            .snd-icon {
+                font-size: 14px;
+                color: var(--dim);
+                flex-shrink: 0;
+                padding-top: 1px;
+                transition: color 0.08s;
+                width: 16px;
+                text-align: center;
+            }
+
+            .snd:hover .snd-icon {
+                color: var(--muted);
+            }
+            .snd.playing .snd-icon {
+                color: var(--acc-txt);
+            }
+            .snd.fading .snd-icon {
+                color: #f09070;
+            }
+
+            .snd-lbl {
+                font-size: 12px;
+                line-height: 1.45;
+                word-break: break-word;
+                flex: 1;
+                transition: color 0.08s;
+            }
+
+            .snd.playing .snd-lbl {
+                color: var(--acc-txt);
+                font-weight: 700;
+            }
+            .snd.fading .snd-lbl {
+                color: #f09070;
+            }
+
+            .snd-foot {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 10px 8px 13px;
+                gap: 6px;
+            }
+
+            .snd-state {
+                font-size: 10px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--dim);
+                transition: color 0.08s;
+            }
+
+            .snd.playing .snd-state {
+                color: rgba(245, 237, 232, 0.7);
+            }
+            .snd.fading .snd-state {
+                color: #f09070;
+            }
+
+            .loop-tog {
+                font-family: inherit;
+                font-size: 10px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                background: none;
+                border: 1px solid var(--bd2);
+                color: var(--dim);
+                padding: 2px 7px;
+                cursor: pointer;
+                transition: all 0.08s;
+            }
+
+            .loop-tog:hover {
+                border-color: var(--muted);
+                color: var(--txt);
+            }
+
+            .loop-tog.on {
+                border-color: var(--acc-txt);
+                color: var(--acc-txt);
+                background: rgba(255, 255, 255, 0.07);
+            }
+
+            .snd.playing .loop-tog {
+                border-color: rgba(245, 237, 232, 0.4);
+                color: rgba(245, 237, 232, 0.7);
+            }
+            .snd.playing .loop-tog.on {
+                border-color: var(--acc-txt);
+                color: var(--acc-txt);
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .snd.fading .loop-tog {
+                border-color: #7a4030;
+                color: #f09070;
+            }
+
+            /* ─── MISC ───────────────────────────────── */
+            .status {
+                padding: 40px 0;
+                font-size: 13px;
+                color: var(--muted);
+            }
+            .err {
+                padding: 16px 20px;
+                border: 1px solid var(--accent);
+                color: var(--accent);
+                font-size: 13px;
+                line-height: 1.7;
+            }
+
+            /* ─── ERROR STATES ───────────────────────── */
+            .snd.broken {
+                background: #1a1010;
+                border-color: #5a2020;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+            .snd.broken .snd-icon {
+                color: #7a3030;
+            }
+            .snd.broken .snd-lbl {
+                color: #996666;
+                text-decoration: line-through;
+            }
+            .snd.broken .snd-state {
+                color: #7a3030;
+            }
+
+            /* ─── WARNING BANNER ─────────────────────── */
+            #warn-banner {
+                background: #1c1005;
+                border-bottom: 1px solid #7a4a10;
+                padding: 10px 28px;
+                font-size: 12px;
+                color: #c8883a;
+                line-height: 1.6;
+                display: none;
+            }
+            #warn-banner strong {
+                color: #e8a050;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="bar">
+            <a class="back" href="index.html">← Boards</a>
+            <div id="bar-title">—</div>
+            <div id="playing-strip">
+                <span id="playing-label">▶</span>
+                <div id="playing-tags"></div>
+            </div>
+            <button id="stop-all" disabled>Stop all</button>
+        </div>
+
+        <div id="warn-banner"></div>
+        <div id="content"><div class="status">Lade...</div></div>
+
+        <script>
+            const esc = (s) =>
+                String(s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+            // ─── FLAC / codec check ──────────────────────────────
+            function checkCodecs() {
+                const banner = document.getElementById("warn-banner");
+                const t = document.createElement("audio");
+                const flacOk =
+                    t.canPlayType("audio/flac") ||
+                    t.canPlayType("audio/x-flac");
+                if (!flacOk) {
+                    banner.style.display = "block";
+                    banner.innerHTML = `<strong>⚠ FLAC nicht unterstützt</strong> — Dieser Browser kann .flac-Dateien nicht abspielen.
+      Lösung: Dateien zu <strong>.mp3</strong> oder <strong>.ogg</strong> konvertieren, oder Chrome/Firefox verwenden.`;
+                }
+                const opusOk =
+                    t.canPlayType("audio/ogg; codecs=opus") ||
+                    t.canPlayType("audio/opus");
+                if (!opusOk && !flacOk) {
+                    banner.innerHTML +=
+                        " &nbsp;|&nbsp; <strong>.opus</strong> ebenfalls nicht unterstützt.";
+                }
+            }
+
+            // ─── Audio pool ──────────────────────────────────────
+            const pool = {};
+
+            function entry(file, audioPath) {
+                if (!pool[file]) {
+                    const a = new Audio(audioPath + encodeURIComponent(file));
+                    a.preload = "auto";
+                    pool[file] = {
+                        audio: a,
+                        loop: false,
+                        fade: null,
+                        cards: [],
+                        broken: false,
+                    };
+
+                    a.addEventListener("ended", () => {
+                        if (!a.loop) finish(file);
+                    });
+
+                    a.addEventListener("error", () => {
+                        const e = pool[file];
+                        if (e.broken) return;
+                        e.broken = true;
+                        e.cards.forEach((card) => {
+                            card.classList.add("broken");
+                            const state = card.querySelector(".snd-state");
+                            const icon = card.querySelector(".snd-icon");
+                            if (state) state.textContent = errMsg(a.error);
+                            if (icon) icon.textContent = "✕";
+                            const ltog = card.querySelector(".loop-tog");
+                            if (ltog) ltog.style.display = "none";
+                        });
+                    });
+                }
+                return pool[file];
+            }
+
+            function errMsg(err) {
+                if (!err) return "Fehler";
+                switch (err.code) {
+                    case 1:
+                        return "Abgebrochen";
+                    case 2:
+                        return "Netzwerkfehler";
+                    case 3:
+                        return "Codec?"; // MEDIA_ERR_DECODE — most likely for FLAC
+                    case 4:
+                        return "Format?"; // MEDIA_ERR_SRC_NOT_SUPPORTED
+                    default:
+                        return "Fehler";
+                }
+            }
+
+            function isOn(file) {
+                const e = pool[file];
+                return e && !e.audio.paused;
+            }
+            function isFading(file) {
+                const e = pool[file];
+                return e && e.fade !== null;
+            }
+            function isBroken(file) {
+                const e = pool[file];
+                return e && e.broken;
+            }
+
+            function play(file, audioPath) {
+                if (isBroken(file)) return;
+                const e = entry(file, audioPath);
+                cancelFade(e);
+                e.audio.volume = 1;
+                e.audio.currentTime = 0;
+                e.audio.loop = e.loop;
+                e.audio.play().catch((err) => {
+                    // NotAllowedError = no user gesture yet (shouldn't happen here), others = real errors
+                    console.warn("play() rejected:", err.name, err.message);
+                });
+                sync(file);
+                updateBar();
+            }
+
+            function stop(file, fade) {
+                const e = pool[file];
+                if (!e) return;
+                cancelFade(e);
+                if (!fade || e.audio.paused) {
+                    finish(file);
+                    return;
+                }
+
+                let v = e.audio.volume;
+                const step = v / 40;
+                e.fade = setInterval(() => {
+                    v = Math.max(0, v - step);
+                    e.audio.volume = v;
+                    if (v <= 0) {
+                        clearInterval(e.fade);
+                        e.fade = null;
+                        finish(file);
+                    }
+                }, 50);
+                sync(file);
+                updateBar();
+            }
+
+            function finish(file) {
+                const e = pool[file];
+                if (!e) return;
+                e.audio.pause();
+                e.audio.currentTime = 0;
+                e.audio.volume = 1;
+                sync(file);
+                updateBar();
+            }
+
+            function cancelFade(e) {
+                if (e.fade) {
+                    clearInterval(e.fade);
+                    e.fade = null;
+                }
+            }
+
+            function toggleLoop(file) {
+                const e = pool[file];
+                if (!e) return;
+                e.loop = !e.loop;
+                e.audio.loop = e.loop;
+                sync(file);
+            }
+
+            function stopAll() {
+                Object.keys(pool).forEach((f) => stop(f, true));
+            }
+
+            // ─── DOM sync ────────────────────────────────────────
+            function sync(file) {
+                const e = pool[file];
+                if (!e) return;
+                const on = !e.audio.paused;
+                const fading = e.fade !== null;
+
+                e.cards.forEach((card) => {
+                    card.classList.toggle("playing", on && !fading);
+                    card.classList.toggle("fading", fading);
+
+                    const icon = card.querySelector(".snd-icon");
+                    const state = card.querySelector(".snd-state");
+                    const ltog = card.querySelector(".loop-tog");
+
+                    if (icon) icon.textContent = on && !fading ? "■" : "▶";
+                    if (state)
+                        state.textContent = fading ? "fade…" : on ? "live" : "";
+                    if (ltog) {
+                        ltog.textContent = e.loop ? "↺ loop" : "loop";
+                        ltog.classList.toggle("on", e.loop);
+                    }
+                });
+            }
+
+            function updateBar() {
+                const tags = document.getElementById("playing-tags");
+                const label = document.getElementById("playing-label");
+                const btn = document.getElementById("stop-all");
+                tags.innerHTML = "";
+
+                const active = Object.entries(pool).filter(
+                    ([, e]) => !e.audio.paused || e.fade,
+                );
+                label.style.display = active.length ? "block" : "none";
+                btn.disabled = active.length === 0;
+
+                active.forEach(([file, e]) => {
+                    const lbl =
+                        e.cards[0]?.querySelector(".snd-lbl")?.textContent ||
+                        file;
+                    const t = document.createElement("div");
+                    t.className = "ptag" + (e.fade ? " fading" : "");
+                    t.textContent = (e.loop ? "↺ " : "") + lbl;
+                    t.title = "Stoppen";
+                    t.onclick = () => stop(file, true);
+                    tags.appendChild(t);
+                });
+            }
+
+            // ─── Card factory ─────────────────────────────────────
+            function makeCard(sound, audioPath) {
+                const { file, label } = sound;
+                const e = entry(file, audioPath);
+
+                const card = document.createElement("div");
+                card.className = "snd";
+                card.innerHTML = `
+    <div class="snd-main">
+      <span class="snd-icon">▶</span>
+      <span class="snd-lbl">${esc(label || file)}</span>
     </div>
-    <div class="card-bottom">
-      <span class="card-status"></span>
-      <button class="loop-btn" title="Loop an/aus">↺ Loop</button>
-    </div>
-  `;
+    <div class="snd-foot">
+      <span class="snd-state"></span>
+      <button class="loop-tog">loop</button>
+    </div>`;
 
-  // Register card in pool
-  const entry = getAudio(file, audioPath);
-  entry.cards.push(card);
+                e.cards.push(card);
 
-  // Play / stop on card click (not loop btn)
-  card.querySelector('.card-play-area').addEventListener('click', () => {
-    if (isPlaying(file) || isFading(file)) {
-      stopEntry(file, true);
-    } else {
-      playSound(file, audioPath);
-    }
-  });
+                card.querySelector(".snd-main").addEventListener(
+                    "click",
+                    () => {
+                        if (isBroken(file)) return;
+                        isOn(file) || isFading(file)
+                            ? stop(file, true)
+                            : play(file, audioPath);
+                    },
+                );
 
-  // Loop toggle — stop propagation so it doesn't also trigger play
-  card.querySelector('.loop-btn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleLoop(file);
-    if (isPlaying(file)) {
-      // Apply loop change live
-      audioPool[file].audio.loop = audioPool[file].loop;
-    }
-  });
+                card.querySelector(".loop-tog").addEventListener(
+                    "click",
+                    (ev) => {
+                        ev.stopPropagation();
+                        toggleLoop(file);
+                    },
+                );
 
-  return card;
-}
+                return card;
+            }
 
-// ── RENDER BOARD ──────────────────────────────────────────
-async function loadBoard() {
-  const content = document.getElementById('content');
-  const params = new URLSearchParams(location.search);
-  const boardId = params.get('id');
+            // ─── Load & render ────────────────────────────────────
+            async function init() {
+                checkCodecs();
+                const content = document.getElementById("content");
+                const params = new URLSearchParams(location.search);
+                const id = params.get("id");
 
-  if (!boardId) {
-    content.innerHTML = '<div class="error-box">Kein Board ausgewählt. <a href="index.html" style="color:var(--gold)">← Zurück</a></div>';
-    return;
-  }
+                if (!id) {
+                    content.innerHTML =
+                        '<div class="err">Kein Board-ID. <a href="index.html" style="color:inherit">← Zurück</a></div>';
+                    return;
+                }
 
-  let config;
-  try {
-    const res = await fetch('config.json');
-    config = await res.json();
-  } catch (e) {
-    content.innerHTML = `<div class="error-box">Fehler beim Laden der Konfiguration: ${escHtml(e.message)}</div>`;
-    return;
-  }
+                let cfg;
+                try {
+                    cfg = await fetch("config.json").then((r) => r.json());
+                } catch (e) {
+                    content.innerHTML = `<div class="err">${esc(e.message)}</div>`;
+                    return;
+                }
 
-  const board = config.boards.find(b => b.id === boardId);
-  if (!board) {
-    content.innerHTML = `<div class="error-box">Board "${escHtml(boardId)}" nicht in config.json gefunden.</div>`;
-    return;
-  }
+                const board = cfg.boards?.find((b) => b.id === id);
+                if (!board) {
+                    content.innerHTML = `<div class="err">Board "${esc(id)}" nicht gefunden.</div>`;
+                    return;
+                }
 
-  document.title = board.title + ' – Soundboard';
-  document.getElementById('board-title-bar').textContent = board.title;
+                document.title = board.title + " - Soundboard";
+                document.getElementById("bar-title").textContent = board.title;
 
-  const audioPath = board.audioPath || `audio/${board.id}/`;
-  const scenes = board.scenes || [];
+                const audioPath = board.audioPath || `audio/${board.id}/`;
+                content.innerHTML = "";
 
-  content.innerHTML = '';
+                (board.scenes || []).forEach((scene) => {
+                    const sec = document.createElement("section");
+                    sec.className = "scene";
 
-  const nav = document.getElementById('scene-nav');
+                    const head = document.createElement("div");
+                    head.className = "scene-head";
+                    head.innerHTML = `
+      <span class="scene-num">Sz. ${esc(String(scene.number))}</span>
+      <span class="scene-title">${esc(scene.name || "")}</span>
+      <span class="scene-n">${scene.sounds?.length || 0}</span>`;
+                    sec.appendChild(head);
 
-  scenes.forEach((scene, si) => {
-    const sectionId = `scene-${si}`;
-    const section = document.createElement('section');
-    section.className = 'scene-section';
-    section.id = sectionId;
+                    const grid = document.createElement("div");
+                    grid.className = "grid";
+                    (scene.sounds || []).forEach((s) =>
+                        grid.appendChild(makeCard(s, audioPath)),
+                    );
+                    sec.appendChild(grid);
+                    content.appendChild(sec);
+                });
 
-    const header = document.createElement('div');
-    header.className = 'scene-header';
-    header.innerHTML = `
-      <span class="scene-num">Sz. ${escHtml(String(scene.number))}</span>
-      <span class="scene-name">${escHtml(scene.name || '')}</span>
-      <span class="scene-count">${scene.sounds ? scene.sounds.length : 0} Sounds</span>
-    `;
-    section.appendChild(header);
+                document
+                    .getElementById("stop-all")
+                    .addEventListener("click", stopAll);
+            }
 
-    const grid = document.createElement('div');
-    grid.className = 'sound-grid';
-
-    (scene.sounds || []).forEach(sound => {
-      grid.appendChild(makeCard(sound, audioPath));
-    });
-
-    section.appendChild(grid);
-    content.appendChild(section);
-
-    // Nav dot
-    const dot = document.createElement('div');
-    dot.className = 'scene-nav-dot';
-    dot.innerHTML = `<div class="nav-tooltip">Sz. ${escHtml(String(scene.number))} – ${escHtml(scene.name || '')}</div>`;
-    dot.addEventListener('click', () => {
-      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
-    });
-    nav.appendChild(dot);
-  });
-
-  // Stop all button
-  document.getElementById('stop-all-btn').addEventListener('click', stopAllSounds);
-
-  // Scene nav active state
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      const idx = [...content.querySelectorAll('.scene-section')].indexOf(entry.target);
-      if (idx >= 0) {
-        nav.children[idx]?.classList.toggle('active', entry.isIntersecting);
-      }
-    });
-  }, { threshold: 0.3 });
-
-  content.querySelectorAll('.scene-section').forEach(s => observer.observe(s));
-}
-
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;');
-}
-
-loadBoard();
-</script>
-</body>
+            init();
+        </script>
+    </body>
 </html>
