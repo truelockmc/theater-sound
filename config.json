@@ -33,7 +33,7 @@
               "label": "Maschine hochnehmen"
             },
             {
-              "file": "Astral Projection - Enrico Sangiuliano.flac",
+              "file": "Astral Projection - Enrico Sangiuliano.ogg",
               "label": "Astral Projection"
             }
           ]
@@ -43,28 +43,28 @@
           "name": "Szene 4 - Uhrenschläge",
           "sounds": [
             {
-              "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.flac",
+              "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.ogg",
               "label": "Stundenschlag Ulmer Münster"
             },
             {
-              "file": "Uhrenschlag - Bell's Digital.flac",
+              "file": "Uhrenschlag - Bell's Digital.ogg",
               "label": "Uhrenschlag Bell's Digital"
             },
             {
-              "file": "Uhrenschlag - Carlos Albrecht.flac",
+              "file": "Uhrenschlag - Carlos Albrecht.ogg",
               "label": "Uhrenschlag Carlos Albrecht"
             },
             {
               "file": "Uhrenschlag - na Not Applicable.mp3",
               "label": "Uhrenschlag"
             },
-            { "file": "vecna clock.flac", "label": "Vecna Clock" },
+            { "file": "vecna clock.ogg", "label": "Vecna Clock" },
             {
-              "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.flac",
+              "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.ogg",
               "label": "Küchentimer (3x)"
             },
             {
-              "file": "Old Bell Tower - Derek Fiechter.flac",
+              "file": "Old Bell Tower - Derek Fiechter.ogg",
               "label": "Old Bell Tower"
             }
           ]
@@ -74,24 +74,24 @@
           "name": "Szene 5 - Musik",
           "sounds": [
             {
-              "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.flac",
+              "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.ogg",
               "label": "Volkwein"
             },
             {
-              "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.flac",
+              "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.ogg",
               "label": "Wide Open"
             },
             {
-              "file": "Dark Planet - Boris Brejcha.flac",
+              "file": "Dark Planet - Boris Brejcha.ogg",
               "label": "Dark Planet"
             },
             {
-              "file": "Fluch der Karibik - Jean Luc Marie.flac",
+              "file": "Fluch der Karibik - Jean Luc Marie.ogg",
               "label": "Fluch der Karibik"
             },
-            { "file": "Aura - Leni Woess, Toby Woess.flac", "label": "Aura" },
+            { "file": "Aura - Leni Woess, Toby Woess.ogg", "label": "Aura" },
             {
-              "file": "Jacob Marley's Ghost - Jonas Maus.flac",
+              "file": "Jacob Marley's Ghost - Jonas Maus.ogg",
               "label": "Jacob Marley's Ghost"
             }
           ]
@@ -101,24 +101,24 @@
           "name": "Alle Sounds (Übersicht)",
           "sounds": [
             {
-              "file": "Astral Projection - Enrico Sangiuliano.flac",
+              "file": "Astral Projection - Enrico Sangiuliano.ogg",
               "label": "Astral Projection"
             },
-            { "file": "Aura - Leni Woess, Toby Woess.flac", "label": "Aura" },
+            { "file": "Aura - Leni Woess, Toby Woess.ogg", "label": "Aura" },
             { "file": "Baby weinen.opus", "label": "Baby weinen" },
             {
-              "file": "Dark Planet - Boris Brejcha.flac",
+              "file": "Dark Planet - Boris Brejcha.ogg",
               "label": "Dark Planet"
             },
             { "file": "Donner.mp3", "label": "Donner" },
             { "file": "electric-razor.mp3", "label": "Elektrorasierer" },
             {
-              "file": "Fluch der Karibik - Jean Luc Marie.flac",
+              "file": "Fluch der Karibik - Jean Luc Marie.ogg",
               "label": "Fluch der Karibik"
             },
             { "file": "Graue Herren Alarm.wav", "label": "Graue Herren Alarm" },
             {
-              "file": "Jacob Marley's Ghost - Jonas Maus.flac",
+              "file": "Jacob Marley's Ghost - Jonas Maus.ogg",
               "label": "Jacob Marley's Ghost"
             },
             {
@@ -126,36 +126,36 @@
               "label": "Maschine hochnehmen"
             },
             {
-              "file": "Old Bell Tower - Derek Fiechter.flac",
+              "file": "Old Bell Tower - Derek Fiechter.ogg",
               "label": "Old Bell Tower"
             },
             {
-              "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.flac",
+              "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.ogg",
               "label": "Stundenschlag Ulmer Münster"
             },
             {
-              "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.flac",
+              "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.ogg",
               "label": "Küchentimer (3x)"
             },
             {
-              "file": "Uhrenschlag - Bell's Digital.flac",
+              "file": "Uhrenschlag - Bell's Digital.ogg",
               "label": "Uhrenschlag Bell's Digital"
             },
             {
-              "file": "Uhrenschlag - Carlos Albrecht.flac",
+              "file": "Uhrenschlag - Carlos Albrecht.ogg",
               "label": "Uhrenschlag Carlos Albrecht"
             },
             {
               "file": "Uhrenschlag - na Not Applicable.mp3",
               "label": "Uhrenschlag"
             },
-            { "file": "vecna clock.flac", "label": "Vecna Clock" },
+            { "file": "vecna clock.ogg", "label": "Vecna Clock" },
             {
-              "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.flac",
+              "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.ogg",
               "label": "Volkwein"
             },
             {
-              "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.flac",
+              "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.ogg",
               "label": "Wide Open"
             }
           ]
