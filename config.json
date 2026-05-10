@@ -98,67 +98,8 @@
         },
         {
           "number": "0",
-          "name": "Alle Sounds (Übersicht)",
-          "sounds": [
-            {
-              "file": "Astral Projection - Enrico Sangiuliano.ogg",
-              "label": "Astral Projection"
-            },
-            { "file": "Aura - Leni Woess, Toby Woess.ogg", "label": "Aura" },
-            { "file": "Baby weinen.opus", "label": "Baby weinen" },
-            {
-              "file": "Dark Planet - Boris Brejcha.ogg",
-              "label": "Dark Planet"
-            },
-            { "file": "Donner.mp3", "label": "Donner" },
-            { "file": "electric-razor.mp3", "label": "Elektrorasierer" },
-            {
-              "file": "Fluch der Karibik - Jean Luc Marie.ogg",
-              "label": "Fluch der Karibik"
-            },
-            { "file": "Graue Herren Alarm.wav", "label": "Graue Herren Alarm" },
-            {
-              "file": "Jacob Marley's Ghost - Jonas Maus.ogg",
-              "label": "Jacob Marley's Ghost"
-            },
-            {
-              "file": "Machine hochnehmen momo.mp3",
-              "label": "Maschine hochnehmen"
-            },
-            {
-              "file": "Old Bell Tower - Derek Fiechter.ogg",
-              "label": "Old Bell Tower"
-            },
-            {
-              "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.ogg",
-              "label": "Stundenschlag Ulmer Münster"
-            },
-            {
-              "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.ogg",
-              "label": "Küchentimer (3x)"
-            },
-            {
-              "file": "Uhrenschlag - Bell's Digital.ogg",
-              "label": "Uhrenschlag Bell's Digital"
-            },
-            {
-              "file": "Uhrenschlag - Carlos Albrecht.ogg",
-              "label": "Uhrenschlag Carlos Albrecht"
-            },
-            {
-              "file": "Uhrenschlag - na Not Applicable.mp3",
-              "label": "Uhrenschlag"
-            },
-            { "file": "vecna clock.ogg", "label": "Vecna Clock" },
-            {
-              "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.ogg",
-              "label": "Volkwein"
-            },
-            {
-              "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.ogg",
-              "label": "Wide Open"
-            }
-          ]
+          "name": "Alle Sounds",
+          "auto": true
         }
       ]
     }

@@ -409,7 +409,47 @@
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;");
 
-            // ─── FLAC / codec check ──────────────────────────────
+            // ─── Loop persistence ─────────────────────────────────
+            const LOOP_KEY = (id) => `sb_loop_${id}`;
+
+            function loadLoopState(boardId) {
+                try {
+                    return JSON.parse(
+                        localStorage.getItem(LOOP_KEY(boardId)) || "{}",
+                    );
+                } catch {
+                    return {};
+                }
+            }
+
+            function saveLoopState(boardId) {
+                const state = {};
+                Object.entries(pool).forEach(([file, e]) => {
+                    if (e.loop) state[file] = true;
+                });
+                try {
+                    localStorage.setItem(
+                        LOOP_KEY(boardId),
+                        JSON.stringify(state),
+                    );
+                } catch {}
+            }
+
+            // ─── Auto-scene: collect all unique sounds from other scenes ──
+            function buildAutoScene(scenes) {
+                const seen = new Set();
+                const sounds = [];
+                scenes.forEach((s) => {
+                    if (s.auto) return;
+                    (s.sounds || []).forEach((snd) => {
+                        if (!seen.has(snd.file)) {
+                            seen.add(snd.file);
+                            sounds.push(snd);
+                        }
+                    });
+                });
+                return sounds;
+            }
             function checkCodecs() {
                 const banner = document.getElementById("warn-banner");
                 const t = document.createElement("audio");
@@ -552,11 +592,12 @@
                 }
             }
 
-            function toggleLoop(file) {
+            function toggleLoop(file, boardId) {
                 const e = pool[file];
                 if (!e) return;
                 e.loop = !e.loop;
                 e.audio.loop = e.loop;
+                saveLoopState(boardId);
                 sync(file);
             }
 
@@ -615,7 +656,7 @@
             }
 
             // ─── Card factory ─────────────────────────────────────
-            function makeCard(sound, audioPath) {
+            function makeCard(sound, audioPath, boardId) {
                 const { file, label } = sound;
                 const e = entry(file, audioPath);
 
@@ -647,7 +688,7 @@
                     "click",
                     (ev) => {
                         ev.stopPropagation();
-                        toggleLoop(file);
+                        toggleLoop(file, boardId);
                     },
                 );
 
@@ -681,13 +722,23 @@
                     return;
                 }
 
-                document.title = board.title + " - Soundboard";
+                document.title = board.title + " – Soundboard";
                 document.getElementById("bar-title").textContent = board.title;
 
                 const audioPath = board.audioPath || `audio/${board.id}/`;
+                const savedLoop = loadLoopState(board.id);
                 content.innerHTML = "";
 
-                (board.scenes || []).forEach((scene) => {
+                // Resolve auto scenes before rendering
+                const scenes = (board.scenes || []).map((scene) => {
+                    if (!scene.auto) return scene;
+                    return {
+                        ...scene,
+                        sounds: buildAutoScene(board.scenes || []),
+                    };
+                });
+
+                scenes.forEach((scene) => {
                     const sec = document.createElement("section");
                     sec.className = "scene";
 
@@ -701,12 +752,21 @@
 
                     const grid = document.createElement("div");
                     grid.className = "grid";
-                    (scene.sounds || []).forEach((s) =>
-                        grid.appendChild(makeCard(s, audioPath)),
-                    );
+                    (scene.sounds || []).forEach((s) => {
+                        // Apply saved loop state before card is created
+                        const e = entry(s.file, audioPath);
+                        if (savedLoop[s.file]) {
+                            e.loop = true;
+                            e.audio.loop = true;
+                        }
+                        grid.appendChild(makeCard(s, audioPath, board.id));
+                    });
                     sec.appendChild(grid);
                     content.appendChild(sec);
                 });
+
+                // Sync all cards to reflect restored loop state
+                Object.keys(pool).forEach(sync);
 
                 document
                     .getElementById("stop-all")
