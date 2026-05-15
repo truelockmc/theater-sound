@@ -1,5 +1,5 @@
 {
-  "_comment": "Soundboard Konfiguration. Szenen haben eine 'number' (z.B. '1', '7.1', '7.2'). Ein Sound kann in mehreren Szenen auftauchen. einfach denselben 'file'-Eintrag in mehreren Szenen verwenden.",
+  "_comment": "Soundboard Konfiguration. 'loop': true bedeutet standardmäßig wiederholen (kein localStorage, gilt nur bis zum Reload).",
   "boards": [
     {
       "id": "momo",
@@ -12,16 +12,28 @@
           "number": "1",
           "name": "Szene 1",
           "sounds": [
-            { "file": "Donner.mp3", "label": "Donner" },
-            { "file": "Baby weinen.opus", "label": "Baby weinen" }
+            { "file": "Donner.mp3", "label": "Donner", "loop": false },
+            {
+              "file": "Baby weinen.opus",
+              "label": "Baby weinen",
+              "loop": true
+            }
           ]
         },
         {
           "number": "2",
           "name": "Szene 2",
           "sounds": [
-            { "file": "Graue Herren Alarm.wav", "label": "Graue Herren Alarm" },
-            { "file": "electric-razor.mp3", "label": "Elektrorasierer" }
+            {
+              "file": "Graue Herren Alarm.wav",
+              "label": "Graue Herren Alarm",
+              "loop": true
+            },
+            {
+              "file": "electric-razor.mp3",
+              "label": "Elektrorasierer",
+              "loop": false
+            }
           ]
         },
         {
@@ -30,11 +42,13 @@
           "sounds": [
             {
               "file": "Machine hochnehmen momo.mp3",
-              "label": "Maschine hochnehmen"
+              "label": "Maschine hochnehmen",
+              "loop": true
             },
             {
               "file": "Astral Projection - Enrico Sangiuliano.ogg",
-              "label": "Astral Projection"
+              "label": "Astral Projection",
+              "loop": false
             }
           ]
         },
@@ -44,28 +58,34 @@
           "sounds": [
             {
               "file": "Stundenschlag der Uhr - Anonymous, Glockengeläut Ulmer Münster.ogg",
-              "label": "Stundenschlag Ulmer Münster"
+              "label": "Stundenschlag Ulmer Münster",
+              "loop": false
             },
             {
               "file": "Uhrenschlag - Bell's Digital.ogg",
-              "label": "Uhrenschlag Bell's Digital"
+              "label": "Uhrenschlag Bell's Digital",
+              "loop": false
             },
             {
               "file": "Uhrenschlag - Carlos Albrecht.ogg",
-              "label": "Uhrenschlag Carlos Albrecht"
+              "label": "Uhrenschlag Carlos Albrecht",
+              "loop": false
             },
             {
               "file": "Uhrenschlag - na Not Applicable.mp3",
-              "label": "Uhrenschlag"
+              "label": "Uhrenschlag",
+              "loop": false
             },
-            { "file": "vecna clock.ogg", "label": "Vecna Clock" },
+            { "file": "vecna clock.ogg", "label": "Vecna Clock", "loop": true },
             {
               "file": "Three Plastic Kitchen Timers Drifting in and out of Sync - ASMR Sound Studio.ogg",
-              "label": "Küchentimer (3x)"
+              "label": "Küchentimer (3x)",
+              "loop": true
             },
             {
               "file": "Old Bell Tower - Derek Fiechter.ogg",
-              "label": "Old Bell Tower"
+              "label": "Old Bell Tower",
+              "loop": false
             }
           ]
         },
@@ -75,24 +95,33 @@
           "sounds": [
             {
               "file": "Volkwein - Super Flu, Dortmunder Philharmoniker, Philipp Armbruster.ogg",
-              "label": "Volkwein"
+              "label": "Volkwein",
+              "loop": true
             },
             {
               "file": "Wide Open - Len Faki Dj-Edit - DJ Hyperactive, Len Faki.ogg",
-              "label": "Wide Open"
+              "label": "Wide Open",
+              "loop": true
             },
             {
               "file": "Dark Planet - Boris Brejcha.ogg",
-              "label": "Dark Planet"
+              "label": "Dark Planet",
+              "loop": true
             },
             {
               "file": "Fluch der Karibik - Jean Luc Marie.ogg",
-              "label": "Fluch der Karibik"
+              "label": "Fluch der Karibik",
+              "loop": true
             },
-            { "file": "Aura - Leni Woess, Toby Woess.ogg", "label": "Aura" },
+            {
+              "file": "Aura - Leni Woess, Toby Woess.ogg",
+              "label": "Aura",
+              "loop": true
+            },
             {
               "file": "Jacob Marley's Ghost - Jonas Maus.ogg",
-              "label": "Jacob Marley's Ghost"
+              "label": "Jacob Marley's Ghost",
+              "loop": true
             }
           ]
         },

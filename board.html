@@ -4,11 +4,6 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Soundboard</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap"
-            rel="stylesheet"
-        />
         <style>
             * {
                 margin: 0;
@@ -17,46 +12,45 @@
             }
 
             :root {
-                --bg: #111;
-                --s1: #191919;
-                --s2: #1f1f1f;
-                --bd: #252525;
-                --bd2: #333;
-                --txt: #e8e4da;
-                --muted: #555;
-                --dim: #333;
+                --font: "Courier New", Courier, ui-monospace, monospace;
+                --bg: #0c0c0c;
+                --card: #252525;
+                --card-h: #2e2e2e;
+                --bd: #404040;
+                --bd2: #555;
+                --txt: #f0ece0;
+                --muted: #888;
+                --dim: #555;
                 --accent: #c43c10;
-                --acc-txt: #f5ede8;
+                --acc-txt: #fdf0ea;
+                --fade-bg: #5c1c07;
+                --fade-bd: #8a3010;
             }
 
             body {
                 background: var(--bg);
                 color: var(--txt);
-                font-family: "Courier Prime", "Courier New", monospace;
+                font-family: "Courier New", Courier, ui-monospace, monospace;
                 min-height: 100vh;
             }
 
-            /* ─── TOPBAR ─────────────────────────────── */
+            /* ─── TOPBAR ─────────────────────────── */
             #bar {
                 position: sticky;
                 top: 0;
                 z-index: 99;
-                background: #0e0e0e;
-                border-bottom: 1px solid var(--bd);
+                background: #080808;
+                border-bottom: 2px solid var(--bd);
                 display: flex;
-                align-items: center;
-                gap: 0;
-                height: 48px;
-                padding: 0;
-                overflow: hidden;
+                align-items: stretch;
+                height: 52px;
             }
 
             #bar a.back {
-                padding: 0 18px;
-                height: 100%;
+                padding: 0 20px;
                 display: flex;
                 align-items: center;
-                font-size: 13px;
+                font-size: 15px;
                 color: var(--muted);
                 text-decoration: none;
                 border-right: 1px solid var(--bd);
@@ -67,13 +61,15 @@
             }
             #bar a.back:hover {
                 color: var(--txt);
-                background: var(--s1);
+                background: var(--card);
             }
 
             #bar-title {
                 padding: 0 20px;
-                font-size: 16px;
+                font-size: 18px;
                 font-weight: 700;
+                display: flex;
+                align-items: center;
                 border-right: 1px solid var(--bd);
                 white-space: nowrap;
                 flex-shrink: 0;
@@ -83,15 +79,15 @@
                 flex: 1;
                 display: flex;
                 align-items: center;
-                gap: 6px;
+                gap: 8px;
                 padding: 0 16px;
                 overflow: hidden;
                 min-width: 0;
             }
 
             #playing-label {
-                font-size: 11px;
-                letter-spacing: 0.18em;
+                font-size: 12px;
+                letter-spacing: 0.15em;
                 text-transform: uppercase;
                 color: var(--accent);
                 flex-shrink: 0;
@@ -110,8 +106,8 @@
             }
 
             .ptag {
-                font-size: 11px;
-                padding: 3px 8px;
+                font-size: 12px;
+                padding: 4px 10px;
                 background: #2a1008;
                 border: 1px solid var(--accent);
                 color: var(--acc-txt);
@@ -124,26 +120,23 @@
                 background: #3d1710;
             }
             .ptag.fading {
-                opacity: 0.45;
+                opacity: 0.5;
                 border-style: dashed;
             }
 
             #stop-all {
-                height: 100%;
-                padding: 0 18px;
+                padding: 0 20px;
                 background: none;
                 border: none;
                 border-left: 1px solid var(--bd);
                 font-family: inherit;
-                font-size: 12px;
-                letter-spacing: 0.12em;
+                font-size: 13px;
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
                 color: var(--accent);
                 cursor: pointer;
                 white-space: nowrap;
-                transition:
-                    background 0.08s,
-                    color 0.08s;
+                transition: background 0.08s;
                 flex-shrink: 0;
             }
             #stop-all:hover:not(:disabled) {
@@ -154,107 +147,125 @@
                 cursor: default;
             }
 
-            /* ─── CONTENT ────────────────────────────── */
-            #content {
-                max-width: 1120px;
-                margin: 0 auto;
-                padding: 40px 28px 80px;
+            /* ─── WARN BANNER ────────────────────── */
+            #warn-banner {
+                background: #1c1005;
+                border-bottom: 1px solid #7a4a10;
+                padding: 10px 24px;
+                font-size: 13px;
+                color: #c8883a;
+                line-height: 1.6;
+                display: none;
+            }
+            #warn-banner strong {
+                color: #e8a050;
             }
 
-            /* ─── SCENE ──────────────────────────────── */
+            /* ─── CONTENT ────────────────────────── */
+            #content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 36px 24px 80px;
+            }
+
+            /* ─── SCENE ──────────────────────────── */
             .scene {
-                margin-bottom: 44px;
+                margin-bottom: 48px;
             }
 
             .scene-head {
                 display: flex;
                 align-items: baseline;
-                gap: 14px;
+                gap: 16px;
                 margin-bottom: 14px;
-                padding-bottom: 10px;
-                border-bottom: 2px solid var(--bd2);
+                padding-bottom: 12px;
+                border-bottom: 2px solid var(--bd);
             }
 
             .scene-num {
-                font-size: 12px;
+                font-size: 13px;
                 font-weight: 700;
                 letter-spacing: 0.1em;
                 text-transform: uppercase;
                 color: var(--accent);
                 background: #1e0c05;
-                border: 1px solid #3a1a0a;
-                padding: 2px 8px;
+                border: 1px solid #5a2010;
+                padding: 3px 10px;
                 flex-shrink: 0;
             }
 
             .scene-title {
-                font-size: 18px;
+                font-size: 22px;
                 font-weight: 700;
             }
 
             .scene-n {
-                font-size: 12px;
+                font-size: 13px;
                 color: var(--dim);
                 margin-left: auto;
             }
 
-            /* ─── SOUND GRID ─────────────────────────── */
+            /* ─── GRID ───────────────────────────── */
             .grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-                gap: 6px;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 8px;
             }
 
-            /* ─── SOUND BUTTON ───────────────────────── */
+            /* ─── SOUND CARD ─────────────────────── */
             .snd {
-                background: var(--s1);
-                border: 1px solid var(--bd);
+                background: var(--card);
+                border: 2px solid var(--bd);
                 display: flex;
                 flex-direction: column;
                 cursor: pointer;
+                min-height: 110px;
+                user-select: none;
                 transition:
                     border-color 0.08s,
                     background 0.08s;
-                min-height: 88px;
-                position: relative;
-                user-select: none;
             }
 
             .snd:hover {
-                background: var(--s2);
+                background: var(--card-h);
                 border-color: var(--bd2);
             }
-
             .snd.playing {
                 background: var(--accent);
                 border-color: var(--accent);
             }
-
             .snd.fading {
-                background: #5c1c07;
-                border-color: #7a2a0a;
+                background: var(--fade-bg);
+                border-color: var(--fade-bd);
+            }
+            .snd.broken {
+                background: #1a1010;
+                border-color: #5a2020;
+                cursor: not-allowed;
+                opacity: 0.6;
             }
 
+            /* main click area */
             .snd-main {
                 flex: 1;
                 display: flex;
                 align-items: flex-start;
-                gap: 10px;
-                padding: 12px 13px 8px;
+                gap: 12px;
+                padding: 14px 14px 10px;
             }
 
             .snd-icon {
-                font-size: 14px;
-                color: var(--dim);
+                font-size: 16px;
+                color: var(--muted);
                 flex-shrink: 0;
-                padding-top: 1px;
-                transition: color 0.08s;
-                width: 16px;
+                padding-top: 2px;
+                width: 18px;
                 text-align: center;
+                transition: color 0.08s;
             }
 
             .snd:hover .snd-icon {
-                color: var(--muted);
+                color: var(--txt);
             }
             .snd.playing .snd-icon {
                 color: var(--acc-txt);
@@ -262,10 +273,13 @@
             .snd.fading .snd-icon {
                 color: #f09070;
             }
+            .snd.broken .snd-icon {
+                color: #7a3030;
+            }
 
             .snd-lbl {
-                font-size: 12px;
-                line-height: 1.45;
+                font-size: 15px;
+                line-height: 1.4;
                 word-break: break-word;
                 flex: 1;
                 transition: color 0.08s;
@@ -278,25 +292,29 @@
             .snd.fading .snd-lbl {
                 color: #f09070;
             }
+            .snd.broken .snd-lbl {
+                color: #886666;
+                text-decoration: line-through;
+            }
 
+            /* bottom row */
             .snd-foot {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 0 10px 8px 13px;
-                gap: 6px;
+                padding: 0 10px 10px 14px;
+                gap: 8px;
             }
 
             .snd-state {
-                font-size: 10px;
+                font-size: 11px;
                 letter-spacing: 0.1em;
                 text-transform: uppercase;
                 color: var(--dim);
                 transition: color 0.08s;
             }
-
             .snd.playing .snd-state {
-                color: rgba(245, 237, 232, 0.7);
+                color: rgba(253, 240, 234, 0.6);
             }
             .snd.fading .snd-state {
                 color: #f09070;
@@ -304,87 +322,82 @@
 
             .loop-tog {
                 font-family: inherit;
-                font-size: 10px;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
+                font-size: 12px;
+                letter-spacing: 0.06em;
                 background: none;
                 border: 1px solid var(--bd2);
                 color: var(--dim);
-                padding: 2px 7px;
+                padding: 4px 10px;
                 cursor: pointer;
                 transition: all 0.08s;
             }
-
             .loop-tog:hover {
                 border-color: var(--muted);
                 color: var(--txt);
+                background: rgba(255, 255, 255, 0.04);
             }
-
             .loop-tog.on {
-                border-color: var(--acc-txt);
-                color: var(--acc-txt);
-                background: rgba(255, 255, 255, 0.07);
+                border-color: var(--txt);
+                color: var(--txt);
+                background: rgba(255, 255, 255, 0.08);
             }
-
             .snd.playing .loop-tog {
-                border-color: rgba(245, 237, 232, 0.4);
-                color: rgba(245, 237, 232, 0.7);
+                border-color: rgba(253, 240, 234, 0.4);
+                color: rgba(253, 240, 234, 0.7);
             }
             .snd.playing .loop-tog.on {
                 border-color: var(--acc-txt);
                 color: var(--acc-txt);
                 background: rgba(255, 255, 255, 0.15);
             }
-
             .snd.fading .loop-tog {
                 border-color: #7a4030;
                 color: #f09070;
             }
 
-            /* ─── MISC ───────────────────────────────── */
+            /* ─── MISC ───────────────────────────── */
             .status {
                 padding: 40px 0;
-                font-size: 13px;
+                font-size: 14px;
                 color: var(--muted);
             }
             .err {
                 padding: 16px 20px;
                 border: 1px solid var(--accent);
                 color: var(--accent);
-                font-size: 13px;
+                font-size: 14px;
                 line-height: 1.7;
             }
 
-            /* ─── ERROR STATES ───────────────────────── */
-            .snd.broken {
-                background: #1a1010;
-                border-color: #5a2020;
-                cursor: not-allowed;
-                opacity: 0.7;
-            }
-            .snd.broken .snd-icon {
-                color: #7a3030;
-            }
-            .snd.broken .snd-lbl {
-                color: #996666;
-                text-decoration: line-through;
-            }
-            .snd.broken .snd-state {
-                color: #7a3030;
-            }
-
-            /* ─── WARNING BANNER ─────────────────────── */
-            #warn-banner {
-                background: #1c1005;
-                border-bottom: 1px solid #7a4a10;
-                padding: 10px 28px;
-                font-size: 12px;
-                color: #c8883a;
-                line-height: 1.6;
-                display: none;
-            }
-            #warn-banner strong {
-                color: #e8a050;
+            /* ─── RESPONSIVE ─────────────────────── */
+            @media (max-width: 600px) {
+                #bar-title {
+                    font-size: 16px;
+                    padding: 0 14px;
+                }
+                #bar a.back {
+                    font-size: 14px;
+                    padding: 0 14px;
+                }
+                #content {
+                    padding: 24px 12px 60px;
+                }
+                .scene-title {
+                    font-size: 19px;
+                }
+                .grid {
+                    grid-template-columns: repeat(
+                        auto-fill,
+                        minmax(160px, 1fr)
+                    );
+                    gap: 6px;
+                }
+                .snd-lbl {
+                    font-size: 14px;
+                }
+                .snd {
+                    min-height: 100px;
+                }
             }
         </style>
     </head>
@@ -409,36 +422,33 @@
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;");
 
-            // ─── Loop persistence ─────────────────────────────────
-            const LOOP_KEY = (id) => `sb_loop_${id}`;
-
-            function loadLoopState(boardId) {
-                try {
-                    return JSON.parse(
-                        localStorage.getItem(LOOP_KEY(boardId)) || "{}",
+            // ─── Codec check ──────────────────────────────────────
+            function checkCodecs() {
+                const banner = document.getElementById("warn-banner");
+                const t = document.createElement("audio");
+                const flacOk =
+                    t.canPlayType("audio/flac") ||
+                    t.canPlayType("audio/x-flac");
+                const opusOk =
+                    t.canPlayType("audio/ogg; codecs=opus") ||
+                    t.canPlayType("audio/opus");
+                const msgs = [];
+                if (!flacOk)
+                    msgs.push(
+                        "<strong>.flac</strong> nicht unterstützt — bitte zu .ogg/.mp3 konvertieren oder Chrome/Firefox verwenden",
                     );
-                } catch {
-                    return {};
+                if (!opusOk)
+                    msgs.push("<strong>.opus</strong> nicht unterstützt");
+                if (msgs.length) {
+                    banner.style.display = "block";
+                    banner.innerHTML = "⚠ " + msgs.join(" &nbsp;|&nbsp; ");
                 }
             }
 
-            function saveLoopState(boardId) {
-                const state = {};
-                Object.entries(pool).forEach(([file, e]) => {
-                    if (e.loop) state[file] = true;
-                });
-                try {
-                    localStorage.setItem(
-                        LOOP_KEY(boardId),
-                        JSON.stringify(state),
-                    );
-                } catch {}
-            }
-
-            // ─── Auto-scene: collect all unique sounds from other scenes ──
+            // ─── Auto-scene ───────────────────────────────────────
             function buildAutoScene(scenes) {
-                const seen = new Set();
-                const sounds = [];
+                const seen = new Set(),
+                    sounds = [];
                 scenes.forEach((s) => {
                     if (s.auto) return;
                     (s.sounds || []).forEach((snd) => {
@@ -450,57 +460,37 @@
                 });
                 return sounds;
             }
-            function checkCodecs() {
-                const banner = document.getElementById("warn-banner");
-                const t = document.createElement("audio");
-                const flacOk =
-                    t.canPlayType("audio/flac") ||
-                    t.canPlayType("audio/x-flac");
-                if (!flacOk) {
-                    banner.style.display = "block";
-                    banner.innerHTML = `<strong>⚠ FLAC nicht unterstützt</strong> — Dieser Browser kann .flac-Dateien nicht abspielen.
-      Lösung: Dateien zu <strong>.mp3</strong> oder <strong>.ogg</strong> konvertieren, oder Chrome/Firefox verwenden.`;
-                }
-                const opusOk =
-                    t.canPlayType("audio/ogg; codecs=opus") ||
-                    t.canPlayType("audio/opus");
-                if (!opusOk && !flacOk) {
-                    banner.innerHTML +=
-                        " &nbsp;|&nbsp; <strong>.opus</strong> ebenfalls nicht unterstützt.";
-                }
-            }
 
-            // ─── Audio pool ──────────────────────────────────────
+            // ─── Audio pool ───────────────────────────────────────
             const pool = {};
 
-            function entry(file, audioPath) {
+            function entry(file, audioPath, defaultLoop) {
                 if (!pool[file]) {
                     const a = new Audio(audioPath + encodeURIComponent(file));
                     a.preload = "auto";
                     pool[file] = {
                         audio: a,
-                        loop: false,
+                        loop: !!defaultLoop,
                         fade: null,
                         cards: [],
                         broken: false,
                     };
-
+                    a.loop = !!defaultLoop;
                     a.addEventListener("ended", () => {
                         if (!a.loop) finish(file);
                     });
-
                     a.addEventListener("error", () => {
                         const e = pool[file];
                         if (e.broken) return;
                         e.broken = true;
                         e.cards.forEach((card) => {
                             card.classList.add("broken");
-                            const state = card.querySelector(".snd-state");
-                            const icon = card.querySelector(".snd-icon");
-                            if (state) state.textContent = errMsg(a.error);
-                            if (icon) icon.textContent = "✕";
-                            const ltog = card.querySelector(".loop-tog");
-                            if (ltog) ltog.style.display = "none";
+                            const st = card.querySelector(".snd-state");
+                            const ic = card.querySelector(".snd-icon");
+                            const lt = card.querySelector(".loop-tog");
+                            if (st) st.textContent = errMsg(a.error);
+                            if (ic) ic.textContent = "✕";
+                            if (lt) lt.style.display = "none";
                         });
                     });
                 }
@@ -509,32 +499,25 @@
 
             function errMsg(err) {
                 if (!err) return "Fehler";
-                switch (err.code) {
-                    case 1:
-                        return "Abgebrochen";
-                    case 2:
-                        return "Netzwerkfehler";
-                    case 3:
-                        return "Codec?"; // MEDIA_ERR_DECODE — most likely for FLAC
-                    case 4:
-                        return "Format?"; // MEDIA_ERR_SRC_NOT_SUPPORTED
-                    default:
-                        return "Fehler";
-                }
+                return (
+                    ["", "Abgebrochen", "Netzwerk", "Codec?", "Format?"][
+                        err.code
+                    ] || "Fehler"
+                );
             }
 
-            function isOn(file) {
-                const e = pool[file];
+            const isOn = (f) => {
+                const e = pool[f];
                 return e && !e.audio.paused;
-            }
-            function isFading(file) {
-                const e = pool[file];
+            };
+            const isFading = (f) => {
+                const e = pool[f];
                 return e && e.fade !== null;
-            }
-            function isBroken(file) {
-                const e = pool[file];
+            };
+            const isBroken = (f) => {
+                const e = pool[f];
                 return e && e.broken;
-            }
+            };
 
             function play(file, audioPath) {
                 if (isBroken(file)) return;
@@ -543,10 +526,9 @@
                 e.audio.volume = 1;
                 e.audio.currentTime = 0;
                 e.audio.loop = e.loop;
-                e.audio.play().catch((err) => {
-                    // NotAllowedError = no user gesture yet (shouldn't happen here), others = real errors
-                    console.warn("play() rejected:", err.name, err.message);
-                });
+                e.audio
+                    .play()
+                    .catch((err) => console.warn("play():", err.name));
                 sync(file);
                 updateBar();
             }
@@ -559,7 +541,6 @@
                     finish(file);
                     return;
                 }
-
                 let v = e.audio.volume;
                 const step = v / 40;
                 e.fade = setInterval(() => {
@@ -592,12 +573,11 @@
                 }
             }
 
-            function toggleLoop(file, boardId) {
+            function toggleLoop(file) {
                 const e = pool[file];
                 if (!e) return;
                 e.loop = !e.loop;
                 e.audio.loop = e.loop;
-                saveLoopState(boardId);
                 sync(file);
             }
 
@@ -605,27 +585,24 @@
                 Object.keys(pool).forEach((f) => stop(f, true));
             }
 
-            // ─── DOM sync ────────────────────────────────────────
+            // ─── DOM sync ─────────────────────────────────────────
             function sync(file) {
                 const e = pool[file];
                 if (!e) return;
-                const on = !e.audio.paused;
-                const fading = e.fade !== null;
-
+                const on = !e.audio.paused,
+                    fading = e.fade !== null;
                 e.cards.forEach((card) => {
                     card.classList.toggle("playing", on && !fading);
                     card.classList.toggle("fading", fading);
-
                     const icon = card.querySelector(".snd-icon");
-                    const state = card.querySelector(".snd-state");
-                    const ltog = card.querySelector(".loop-tog");
-
+                    const st = card.querySelector(".snd-state");
+                    const lt = card.querySelector(".loop-tog");
                     if (icon) icon.textContent = on && !fading ? "■" : "▶";
-                    if (state)
-                        state.textContent = fading ? "fade…" : on ? "live" : "";
-                    if (ltog) {
-                        ltog.textContent = e.loop ? "↺ loop" : "loop";
-                        ltog.classList.toggle("on", e.loop);
+                    if (st)
+                        st.textContent = fading ? "fade…" : on ? "live" : "";
+                    if (lt) {
+                        lt.textContent = e.loop ? "↺ loop" : "loop";
+                        lt.classList.toggle("on", e.loop);
                     }
                 });
             }
@@ -635,13 +612,11 @@
                 const label = document.getElementById("playing-label");
                 const btn = document.getElementById("stop-all");
                 tags.innerHTML = "";
-
                 const active = Object.entries(pool).filter(
                     ([, e]) => !e.audio.paused || e.fade,
                 );
                 label.style.display = active.length ? "block" : "none";
-                btn.disabled = active.length === 0;
-
+                btn.disabled = !active.length;
                 active.forEach(([file, e]) => {
                     const lbl =
                         e.cards[0]?.querySelector(".snd-lbl")?.textContent ||
@@ -656,22 +631,23 @@
             }
 
             // ─── Card factory ─────────────────────────────────────
-            function makeCard(sound, audioPath, boardId) {
+            function makeCard(sound, audioPath) {
                 const { file, label } = sound;
-                const e = entry(file, audioPath);
+                const e = entry(file, audioPath, sound.loop);
 
                 const card = document.createElement("div");
                 card.className = "snd";
                 card.innerHTML = `
-    <div class="snd-main">
-      <span class="snd-icon">▶</span>
-      <span class="snd-lbl">${esc(label || file)}</span>
-    </div>
-    <div class="snd-foot">
-      <span class="snd-state"></span>
-      <button class="loop-tog">loop</button>
-    </div>`;
+      <div class="snd-main">
+        <span class="snd-icon">▶</span>
+        <span class="snd-lbl">${esc(label || file)}</span>
+      </div>
+      <div class="snd-foot">
+        <span class="snd-state"></span>
+        <button class="loop-tog">${e.loop ? "↺ loop" : "loop"}</button>
+      </div>`;
 
+                if (e.loop) card.querySelector(".loop-tog").classList.add("on");
                 e.cards.push(card);
 
                 card.querySelector(".snd-main").addEventListener(
@@ -688,19 +664,18 @@
                     "click",
                     (ev) => {
                         ev.stopPropagation();
-                        toggleLoop(file, boardId);
+                        toggleLoop(file);
                     },
                 );
 
                 return card;
             }
 
-            // ─── Load & render ────────────────────────────────────
+            // ─── Init ─────────────────────────────────────────────
             async function init() {
                 checkCodecs();
                 const content = document.getElementById("content");
-                const params = new URLSearchParams(location.search);
-                const id = params.get("id");
+                const id = new URLSearchParams(location.search).get("id");
 
                 if (!id) {
                     content.innerHTML =
@@ -726,17 +701,11 @@
                 document.getElementById("bar-title").textContent = board.title;
 
                 const audioPath = board.audioPath || `audio/${board.id}/`;
-                const savedLoop = loadLoopState(board.id);
                 content.innerHTML = "";
 
-                // Resolve auto scenes before rendering
-                const scenes = (board.scenes || []).map((scene) => {
-                    if (!scene.auto) return scene;
-                    return {
-                        ...scene,
-                        sounds: buildAutoScene(board.scenes || []),
-                    };
-                });
+                const scenes = (board.scenes || []).map((s) =>
+                    s.auto ? { ...s, sounds: buildAutoScene(board.scenes) } : s,
+                );
 
                 scenes.forEach((scene) => {
                     const sec = document.createElement("section");
@@ -745,28 +714,19 @@
                     const head = document.createElement("div");
                     head.className = "scene-head";
                     head.innerHTML = `
-      <span class="scene-num">Sz. ${esc(String(scene.number))}</span>
-      <span class="scene-title">${esc(scene.name || "")}</span>
-      <span class="scene-n">${scene.sounds?.length || 0}</span>`;
+        <span class="scene-num">Sz. ${esc(String(scene.number))}</span>
+        <span class="scene-title">${esc(scene.name || "")}</span>
+        <span class="scene-n">${scene.sounds?.length || 0}</span>`;
                     sec.appendChild(head);
 
                     const grid = document.createElement("div");
                     grid.className = "grid";
-                    (scene.sounds || []).forEach((s) => {
-                        // Apply saved loop state before card is created
-                        const e = entry(s.file, audioPath);
-                        if (savedLoop[s.file]) {
-                            e.loop = true;
-                            e.audio.loop = true;
-                        }
-                        grid.appendChild(makeCard(s, audioPath, board.id));
-                    });
+                    (scene.sounds || []).forEach((s) =>
+                        grid.appendChild(makeCard(s, audioPath)),
+                    );
                     sec.appendChild(grid);
                     content.appendChild(sec);
                 });
-
-                // Sync all cards to reflect restored loop state
-                Object.keys(pool).forEach(sync);
 
                 document
                     .getElementById("stop-all")
